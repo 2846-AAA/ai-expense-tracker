@@ -1,16 +1,22 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = FastAPI()
 
+# 1. THE SCHEMA: Define what an 'Expense' looks like
+class Expense(BaseModel):
+    item: str
+    price: float
+    category: str = "General"
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# 2. THE DATA: A temporary list to act as our database
+fake_database = []
 
+@app.get("/")
+def home():
+    return {"status": "AI Expense Tracker is Live!"}
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+@app.post("/add-expense")
+def add_expense(data: Expense):
+    fake_database.append(data)
+    return {"message": f"Successfully added {data.item}", "current_count": len(fake_database)}
